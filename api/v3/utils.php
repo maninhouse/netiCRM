@@ -612,7 +612,7 @@ function _civicrm_api3_apply_filters_to_dao($filterField, $filterValue, &$dao) {
  * @return array $options options extracted from params
  */
 function _civicrm_api3_get_options_from_params(&$params, $queryObject = false, $entity = '', $action = '') {
-  $sort = CRM_Utils_Array::value('sort', $params, 0);
+  $sort = CRM_Utils_Array::value('sort', $params, '');
   $sort = CRM_Utils_Array::value('option.sort', $params, $sort);
   $sort = CRM_Utils_Array::value('option_sort', $params, $sort);
 
@@ -649,11 +649,14 @@ function _civicrm_api3_get_options_from_params(&$params, $queryObject = false, $
       $returnProperties[$entity . '_id'] = 1;
       unset($returnProperties['id']);
     }
-    switch (trim(strtolower($sort))){
-    case 'id':
-    case 'id desc':
-    case 'id asc':
-      $sort = str_replace('id', $entity . '_id',$sort);
+    if (is_string($sort) && !empty($sort)) {
+      switch (trim(strtolower($sort))){
+        case 'id':
+        case 'id desc':
+        case 'id asc':
+          $sort = str_replace('id', $entity . '_id', $sort);
+          break;
+      }
     }
   }
 
@@ -768,7 +771,7 @@ function _civicrm_api3_dao_to_array($dao, $params = NULL, $uniqueFields = TRUE, 
   while ($dao->fetch()) {
     $tmp = array();
     foreach ($fields as $key) {
-      if (array_key_exists($key, $dao)) {
+      if (property_exists($dao, $key)) {
         // not sure on that one
         if ($dao->$key !== NULL) {
           $tmp[$key] = $dao->$key;
@@ -789,7 +792,7 @@ function _civicrm_api3_dao_to_array($dao, $params = NULL, $uniqueFields = TRUE, 
  * Converts an object to an array
  *
  * @param  object   $dao           (reference )object to convert
- * @param  array    $dao           (reference )array
+ * @param  array    $values        (reference )array
  * @param array  $uniqueFields
  *
  * @return array
@@ -800,7 +803,7 @@ function _civicrm_api3_object_to_array(&$dao, &$values, $uniqueFields = FALSE) {
 
   $fields = _civicrm_api3_build_fields_array($dao, $uniqueFields);
   foreach ($fields as $key => $value) {
-    if (array_key_exists($key, $dao)) {
+    if (property_exists($dao, $key)) {
       $values[$key] = $dao->$key;
     }
   }
@@ -1014,7 +1017,8 @@ function _civicrm_api3_basic_create_fallback($bao_name, &$params) {
     $dao_name = $bao_name;
   }
   static $dao = NULL;
-  if (!$dao) {
+  if (!$dao || !is_array($dao)) {
+    $dao = array();
     require ('CRM/Core/DAO/.listAll.php');
   }
   $entityName = array_search($bao_name, $dao);

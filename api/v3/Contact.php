@@ -300,22 +300,25 @@ function civicrm_api3_contact_delete($params) {
 function _civicrm_api3_contact_check_params( &$params, $dupeCheck = true, $dupeErrorArray = false, $obsoletevalue = true, $dedupeRuleGroupID = null )
 {
 
-  switch (strtolower(CRM_Utils_Array::value('contact_type', $params))) {
-    case 'household':
-      civicrm_api3_verify_mandatory($params, null, array('household_name'));
+  $contact_type = CRM_Utils_Array::value('contact_type', $params);
+  if (is_string($contact_type)) {
+    switch (strtolower($contact_type)) {
+      case 'household':
+        civicrm_api3_verify_mandatory($params, null, array('household_name'));
+        break;
+      case 'organization':
+        civicrm_api3_verify_mandatory($params, null, array('organization_name'));
+        break;
+      case 'individual':
+        civicrm_api3_verify_one_mandatory($params, null, array(
+          'first_name',
+          'last_name',
+          'email',
+          'display_name',
+        )
+      );
       break;
-    case 'organization':
-      civicrm_api3_verify_mandatory($params, null, array('organization_name'));
-      break;
-    case 'individual':
-      civicrm_api3_verify_one_mandatory($params, null, array(
-        'first_name',
-        'last_name',
-        'email',
-        'display_name',
-      )
-    );
-    break;
+    }
   }
 
   if (CRM_Utils_Array::value('contact_sub_type', $params) && CRM_Utils_Array::value('contact_type', $params)) {
@@ -533,7 +536,7 @@ function civicrm_api3_contact_quicksearch($params) {
 
 function civicrm_api3_contact_getquick($params) {
   civicrm_api3_verify_mandatory($params, NULL, array('name'));
-  $name = CRM_Utils_Array::value('name', $params);
+  $name = CRM_Utils_Type::escape(CRM_Utils_Array::value('name', $params), 'String');
 
   $setting = new CRM_Core_BAO_ConfigSetting();
   $setting->add($params);
@@ -550,13 +553,31 @@ function civicrm_api3_contact_getquick($params) {
       $list[$value] = $acOptions[$value];
     }
   }
+
   // If we are doing quicksearch by a field other than name, make sure that field is added to results
   if (!empty($params['field_name'])) {
+    $field_name = CRM_Utils_String::munge($params['field_name']);
+    // there is no good reason to request api_key via getquick
+    if ($field_name == 'api_key') {
+      throw new API_Exception('Illegal value "api_key" for parameter "field_name"');
+    }
+    // Unique name contact_id = id
+    if ($field_name == 'contact_id') {
+      $field_name = 'id';
+    }
+    // core#1420 : trim non-numeric character from phone search string
+    elseif ($field_name == 'phone_numeric') {
+      $name = preg_replace('/[^\d]/', '', $name);
+    }
     // phone_numeric should be phone
-    $searchField = str_replace('_numeric', '', $params['field_name']);
-    if(!in_array($searchField, $list)) {
+    $searchField = str_replace('_numeric', '', $field_name);
+    if (!in_array($searchField, $list)) {
       $list[] = $searchField;
     }
+  }
+  else {
+    // Set field name to first name for exact match checking.
+    $field_name = 'sort_name';
   }
 
   $select = $actualSelectElements = array('sort_name');
@@ -564,11 +585,11 @@ function civicrm_api3_contact_getquick($params) {
   $from   = array();
   foreach ($list as $value) {
     $suffix = substr($value, 0, 2) . substr($value, -1);
+    $selectText = $value;
     switch ($value) {
       case 'street_address':
       case 'city':
       case 'postal_code':
-        $selectText = $value;
         $value      = "address";
         $suffix     = 'sts';
       case 'phone':
@@ -664,8 +685,9 @@ function civicrm_api3_contact_getquick($params) {
 
   //contact's based of relationhip type
   $relType = NULL;
-  if (CRM_Utils_Array::value('rel', $params)) {
-    $relation = explode('_', CRM_Utils_Array::value('rel', $params));
+  $rel = CRM_Utils_Array::value('rel', $params);
+  if (is_string($rel)) {
+    $relation = explode('_', $rel);
     $relType  = CRM_Utils_Type::escape($relation[0], 'Integer');
     $rel      = CRM_Utils_Type::escape($relation[2], 'String');
   }
@@ -708,7 +730,7 @@ function civicrm_api3_contact_getquick($params) {
   }
 
   $additionalFrom = '';
-  if ($relType) {
+  if ($relType && $rel) {
     $additionalFrom = "
             INNER JOIN civicrm_relationship_type r ON (
                 r.id = {$relType}

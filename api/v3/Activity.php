@@ -127,6 +127,7 @@ function civicrm_api3_activity_create($params) {
   $params['deleteActivityAssignment'] = CRM_Utils_Array::value('deleteActivityAssignment', $params, $deleteActivityAssignment);
   $params['deleteActivityTarget'] = CRM_Utils_Array::value('deleteActivityTarget', $params, $deleteActivityTarget);
 
+  /* refs #31851, whole case related activity api has issue, disbale it.
   if ($case_id && $createRevision) {
     // This is very similar to the copy-to-case action.
     if (!CRM_Utils_Array::crmIsEmptyArray($oldActivityValues['target_contact'])) {
@@ -141,7 +142,7 @@ function civicrm_api3_activity_create($params) {
     $oldActivityValues['contactID'] = $oldActivityValues['source_contact_id'];
 
     require_once 'CRM/Activity/Page/AJAX.php';
-    $copyToCase = CRM_Activity_Page_AJAX::_convertToCaseActivity($oldActivityValues);
+    $copyToCase = CRM_Activity_Page_AJAX::convertToCaseActivity($oldActivityValues);
     if (empty($copyToCase['error_msg'])) {
       // now fix some things that are different from copy-to-case
       // then fall through to the create below to update with the passed in params
@@ -153,6 +154,7 @@ function civicrm_api3_activity_create($params) {
       return civicrm_api3_create_error(ts("Unable to create new revision of case activity."), NULL, CRM_Core_DAO::$_nullObject);
     }
   }
+  */
 
   // create activity
   $activityBAO = CRM_Activity_BAO_Activity::create($params);
@@ -335,7 +337,12 @@ SELECT  count(*)
   require_once 'CRM/Core/PseudoConstant.php';
   $activityTypes = CRM_Core_PseudoConstant::activityType(TRUE, TRUE, FALSE, 'name', TRUE);
   $activityName  = CRM_Utils_Array::value('activity_name', $params);
-  $activityName  = ucfirst($activityName);
+  if (is_string($activityName)) {
+    $activityName = ucfirst($activityName);
+  }
+  else {
+    $activityName = '';
+  }
   $activityLabel = CRM_Utils_Array::value('activity_label', $params);
   if ($activityLabel) {
     $activityTypes = CRM_Core_PseudoConstant::activityType(TRUE, TRUE, FALSE, 'label', TRUE);
