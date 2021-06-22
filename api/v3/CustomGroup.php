@@ -83,7 +83,9 @@ function civicrm_api3_custom_group_create($params) {
 
 
   $customGroup = CRM_Core_BAO_CustomGroup::create($params);
-
+  $values = array(
+    $customGroup->id => array(),
+  );
   _civicrm_api3_object_to_array($customGroup, $values[$customGroup->id]);
 
   if (CRM_Utils_Array::value('html_type', $params)) {

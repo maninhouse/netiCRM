@@ -76,6 +76,9 @@ function civicrm_api3_contribution_create($params) {
   if (is_a($contribution, 'CRM_Core_Error')) {
     return civicrm_api3_create_error($contribution->_errors[0]['message']);
   } 
+  else {
+    $contributeArray[$contribution->id] = $contribution;
+  }
   _civicrm_api3_object_to_array($contribution, $contributeArray[$contribution->id]);
 
   return civicrm_api3_create_success($contributeArray, $params, 'contribution', 'create', $contribution);

@@ -448,5 +448,38 @@ class CRM_Utils_Array {
     }
     $r[$last] = $value;
   }
+
+  /**
+   * Trims delimiters from a string and then splits it using explode().
+   *
+   * This method works mostly like PHP's built-in explode(), except that
+   * surrounding delimiters are trimmed before explode() is called.
+   *
+   * Also, if an array or NULL is passed as the $values parameter, the value is
+   * returned unmodified rather than being passed to explode().
+   *
+   * @param array|null|string $values
+   *   The input string (or an array, or NULL).
+   * @param string $delim
+   *   (optional) The boundary string.
+   *
+   * @return array|null
+   *   An array of strings produced by explode(), or the unmodified input
+   *   array, or NULL.
+   */
+  public static function explodePadded($values, $delim = CRM_Core_DAO::VALUE_SEPARATOR) {
+    if ($values === NULL) {
+      return NULL;
+    }
+    // If we already have an array, no need to continue
+    if (is_array($values)) {
+      return $values;
+    }
+    // Empty string -> empty array
+    if ($values === '') {
+      return array();
+    }
+    return explode($delim, trim((string) $values, $delim));
+  }
 }
 

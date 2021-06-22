@@ -91,6 +91,9 @@ function civicrm_api3_custom_field_create($params) {
     }
   }
   $customField = CRM_Core_BAO_CustomField::create($params);
+  $values = array(
+    $customField->id => array(),
+  );
   civicrm_api('custom_field', 'getfields', array('version' => 3, 'cache_clear' => 1));
   _civicrm_api3_object_to_array_unique_fields($customField, $values[$customField->id]);
   return civicrm_api3_create_success($values, $params, 'custom_field', $customField);
