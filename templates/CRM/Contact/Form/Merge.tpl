@@ -145,6 +145,7 @@ table.dedupe-merge td .zmdi-plus {
 
 {literal}
 <script type="text/javascript">
+checkMergeRelation();
 cj(document).ready(function(){ 
   var mainLocBlock = {/literal}{$mainLocBlock}{literal};
   var otherLocationTypeId = {/literal}{$otherLocationTypeId}{literal};
@@ -369,6 +370,48 @@ function checkDataIsErase(cjCheckboxElement){
     cj_right_td.find('.original-value').removeClass('zmdi-minus');
     cj_right_td.find('.zmdi-plus').remove();
   }
+}
+function checkMergeRelation(){
+  var checkbox_contributions = cj('#move_rel_table_contributions');
+  var checkbox_participants = cj('#move_rel_table_participants');
+  var checkbox_memberships = cj('#move_rel_table_memberships');
+  var checkbox_selectall = cj('#toggleSelect');
+
+  //when contributions not checked should check memberships and participants checkbox
+  checkbox_contributions.change(function() {
+    if (!checkbox_contributions.is(":checked")) {
+      if (checkbox_memberships.is(":checked")) {
+        checkbox_contributions.attr('checked','checked');
+      }
+      if (checkbox_participants.is(":checked")) {
+        checkbox_contributions.attr('checked','checked');
+      }
+    }
+  });
+  //when memberships not checked should check contributions checkbox
+  checkbox_memberships.change(function() {
+    if (!checkbox_memberships.is(":checked")) {
+      if (checkbox_contributions.is(":checked")) {
+        checkbox_memberships.attr('checked','checked');
+      }
+    }
+  });
+  //when participants not checked should check contributions checkbox
+  checkbox_participants.change(function() {
+    if (!checkbox_participants.is(":checked")) {
+      if (checkbox_contributions.is(":checked")) {
+        checkbox_participants.attr('checked','checked');
+      }
+    }
+  });
+  //when all checkbox not checked
+  checkbox_selectall.change(function() {
+    if (!checkbox_selectall.is(":checked")) {
+      checkbox_contributions.attr('checked','checked');
+      checkbox_participants.attr('checked','checked');
+      checkbox_memberships.attr('checked','checked');
+    }
+  });
 }
 
 </script>
