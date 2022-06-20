@@ -381,10 +381,17 @@ function checkMergeRelation(){
   checkbox_contributions.change(function() {
     if (!checkbox_contributions.is(":checked")) {
       if (checkbox_memberships.is(":checked")) {
-        checkbox_contributions.attr('checked','checked');
+        checkbox_memberships.attr('checked',false);
       }
       if (checkbox_participants.is(":checked")) {
-        checkbox_contributions.attr('checked','checked');
+        checkbox_participants.attr('checked',false);
+      }
+    } else {
+      if (!checkbox_memberships.is(":checked")) {
+        checkbox_memberships.attr('checked',true);
+      }
+      if (!checkbox_participants.is(":checked")) {
+        checkbox_participants.attr('checked',true);
       }
     }
   });
@@ -392,7 +399,17 @@ function checkMergeRelation(){
   checkbox_memberships.change(function() {
     if (!checkbox_memberships.is(":checked")) {
       if (checkbox_contributions.is(":checked")) {
-        checkbox_memberships.attr('checked','checked');
+        checkbox_contributions.attr('checked',false);
+      }
+      if (checkbox_participants.is(":checked")) {
+        checkbox_participants.attr('checked',false);
+      }
+    } else {
+      if (!checkbox_contributions.is(":checked")) {
+        checkbox_contributions.attr('checked',true);
+      }
+      if (!checkbox_participants.is(":checked")) {
+        checkbox_participants.attr('checked',true);
       }
     }
   });
@@ -400,16 +417,18 @@ function checkMergeRelation(){
   checkbox_participants.change(function() {
     if (!checkbox_participants.is(":checked")) {
       if (checkbox_contributions.is(":checked")) {
-        checkbox_participants.attr('checked','checked');
+        checkbox_contributions.attr('checked',false);
       }
-    }
-  });
-  //when all checkbox not checked
-  checkbox_selectall.change(function() {
-    if (!checkbox_selectall.is(":checked")) {
-      checkbox_contributions.attr('checked','checked');
-      checkbox_participants.attr('checked','checked');
-      checkbox_memberships.attr('checked','checked');
+      if (checkbox_memberships.is(":checked")) {
+        checkbox_memberships.attr('checked',false);
+      }
+    } else {
+      if (!checkbox_contributions.is(":checked")) {
+        checkbox_contributions.attr('checked',true);
+      }
+      if (!checkbox_memberships.is(":checked")) {
+        checkbox_memberships.attr('checked',true);
+      }
     }
   });
 }
