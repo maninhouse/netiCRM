@@ -376,23 +376,26 @@ function checkMergeRelation(){
   var checkbox_contributions = cj('#move_rel_table_contributions');
   var checkbox_participants = cj('#move_rel_table_participants');
   var checkbox_memberships = cj('#move_rel_table_memberships');
-  var checkbox_selectall = cj('#toggleSelect');
 
   //when contributions not checked should check memberships and participants checkbox
   checkbox_contributions.change(function() {
     if (!checkbox_contributions.is(":checked")) {
       if (checkbox_memberships.is(":checked")) {
         checkbox_memberships.attr('checked',false);
+        checkDataIsErase(checkbox_memberships);
       }
       if (checkbox_participants.is(":checked")) {
         checkbox_participants.attr('checked',false);
+        checkDataIsErase(checkbox_participants);
       }
     } else {
       if (!checkbox_memberships.is(":checked")) {
         checkbox_memberships.attr('checked',true);
+        checkDataIsErase(checkbox_memberships);
       }
       if (!checkbox_participants.is(":checked")) {
         checkbox_participants.attr('checked',true);
+        checkDataIsErase(checkbox_participants);
       }
     }
   });
@@ -401,16 +404,20 @@ function checkMergeRelation(){
     if (!checkbox_memberships.is(":checked")) {
       if (checkbox_contributions.is(":checked")) {
         checkbox_contributions.attr('checked',false);
+        checkDataIsErase(checkbox_contributions);
       }
       if (checkbox_participants.is(":checked")) {
         checkbox_participants.attr('checked',false);
+        checkDataIsErase(checkbox_participants);
       }
     } else {
       if (!checkbox_contributions.is(":checked")) {
         checkbox_contributions.attr('checked',true);
+        checkDataIsErase(checkbox_contributions);
       }
       if (!checkbox_participants.is(":checked")) {
         checkbox_participants.attr('checked',true);
+        checkDataIsErase(checkbox_participants);
       }
     }
   });
@@ -419,16 +426,20 @@ function checkMergeRelation(){
     if (!checkbox_participants.is(":checked")) {
       if (checkbox_contributions.is(":checked")) {
         checkbox_contributions.attr('checked',false);
+        checkDataIsErase(checkbox_contributions);
       }
       if (checkbox_memberships.is(":checked")) {
         checkbox_memberships.attr('checked',false);
+        checkDataIsErase(checkbox_memberships);
       }
     } else {
       if (!checkbox_contributions.is(":checked")) {
         checkbox_contributions.attr('checked',true);
+        checkDataIsErase(checkbox_contributions);
       }
       if (!checkbox_memberships.is(":checked")) {
         checkbox_memberships.attr('checked',true);
+        checkDataIsErase(checkbox_memberships);
       }
     }
   });
