@@ -66,7 +66,7 @@ table.dedupe-merge td .zmdi-plus {
         <td>
            {if !is_array($row.other)}
                {$row.other}
-           {else}
+           if{else}
                {$row.other.fileName}
            {/if} 
         </td>
@@ -119,7 +119,11 @@ table.dedupe-merge td .zmdi-plus {
     {else}
     <tr class="{cycle values="even-row,odd-row"}">
       <td><i class="zmdi zmdi-forward"></i> {ts}Move related...{/ts}</td><td><a href="{$params.other_url}" target="_blank">{$params.title}</a> ({ts}Contact ID{/ts} {$other_cid})</td>
-      <td style='white-space: nowrap'><label>{$form.$paramName.html} <i class="zmdi zmdi-redo"></i></label></td>
+      <td style='white-space: nowrap'><label>{$form.$paramName.html} <i class="zmdi zmdi-redo"></i>
+      {if $params.title eq '捐款'}{help id="id-is_contribution"}
+      {elseif $params.title eq '參加者'}{help id="id-is_participant"}
+      {elseif $params.title eq '會員'}{help id="id-is_membership"}
+      {/if}</label></td>
       <td><div><a href="{$params.main_url}" target="_blank">{$params.title}</a> ({ts}Contact ID{/ts} {$main_cid}){if $form.operation.$paramName.add.html}&nbsp;{$form.operation.$paramName.add.html}{/if}</div></td>
     </tr>
     {/if}
