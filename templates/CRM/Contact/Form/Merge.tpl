@@ -142,11 +142,12 @@ table.dedupe-merge td .zmdi-plus {
 </div>
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>
-
 {literal}
 <script type="text/javascript">
-checkMergeRelation();
-cj(document).ready(function(){ 
+cj(document).ready(function(){
+  {/literal}{if $checkMembership || $checkParticipant}
+{literal}checkMergeRelation();{/literal}{/if}
+{literal}
   var mainLocBlock = {/literal}{$mainLocBlock}{literal};
   var otherLocationTypeId = {/literal}{$otherLocationTypeId}{literal};
   var overwriteStr = '{/literal}{ts}overwrite{/ts}{literal}';
