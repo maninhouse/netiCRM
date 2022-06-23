@@ -66,7 +66,7 @@ table.dedupe-merge td .zmdi-plus {
         <td>
            {if !is_array($row.other)}
                {$row.other}
-           if{else}
+           {else}
                {$row.other.fileName}
            {/if} 
         </td>

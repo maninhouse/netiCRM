@@ -30,13 +30,13 @@
 {/htxt}
 
 {htxt id="id-is_contribution"}
-<p>{ts}When participant or membership have contribution history, when uncheck merge Contribution then Participant filed or Membership filed would be uncheck and when check the filed would be the same situation.{/ts}</p>
+<p>{ts}Because the contact has membership and participant payment records, click one of the checkboxes moving Membership, Participant and Contribution will act on all of them.{/ts}</p>
 {/htxt}
 
 {htxt id="id-is_participant"}
-<p>{ts}When participant have contribution history, when uncheck merge Participant filed then Contribution filed would be uncheck and when check the filed would be the same situation.{/ts}</p>
+<p>{ts}Because the contact has participant payment record(s), click one of the checkboxes moving Participant and Contribution will act on both.{/ts}</p>
 {/htxt}
 
 {htxt id="id-is_membership"}
-<p>{ts}When membership have contribution history, when uncheck merge Membership filed then Contribution filed would be uncheck and when check the filed would be the same situation.{/ts}</p>
+<p>{ts}Because the contact has membership payment record(s), click one of the checkboxes moving Membership and Contribution will act on both.{/ts}</p>
 {/htxt}
