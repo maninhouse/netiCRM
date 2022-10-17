@@ -387,7 +387,8 @@ INNER JOIN  civicrm_participant participant ON ( participant.id = payment.partic
       // here we require custom processing.
       if (isset($cpTables[$table])) {
         foreach ($cpTables[$table] as $className => $fnName) {
-          $className::$fnName($mainId, $otherId, $sqls);
+          // The result may be used after sqls executed.
+          $result[$table] = $className::$fnName($mainId, $otherId, $sqls);
         }
         // Skip normal processing
         continue;
@@ -431,6 +432,9 @@ INNER JOIN  civicrm_participant participant ON ( participant.id = payment.partic
         CRM_Core_DAO::$_nullArray,
         TRUE, NULL, TRUE
       );
+    }
+    if ($result['civicrm_relationship']) {
+      CRM_Contact_BAO_Relationship::syncRelatedMemberships($mainId, $result['civicrm_relationship']);
     }
     $transaction->commit();
   }

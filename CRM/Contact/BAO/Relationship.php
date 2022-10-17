@@ -1290,6 +1290,48 @@ cc.sort_name LIKE '%$name%'";
    * @static
    */
   static function mergeRelationships($mainId, $otherId, &$sqls) {
+    // check relatedMembership on mainId but otherId doesn't be owner_membership_id;
+    $params = array(
+      1 => array($otherId, 'Positive'),
+      2 => array($mainId, 'Positive'),
+    );
+    $sql = "SELECT r.contact_id_a AS contact_id_a, r.relationship_type_id AS relationship_type_id FROM civicrm_relationship r 
+      INNER JOIN civicrm_membership_type mt ON r.relationship_type_id = mt.relationship_type_id 
+      INNER JOIN civicrm_membership m ON m.membership_type_id = mt.id
+      WHERE contact_id_b = %1 AND m.contact_id = %2 AND mt.relationship_direction = 'b_a';";
+    $dao = CRM_Core_DAO::executeQuery($sql, $params);
+    while($dao->fetch()) {
+      $relatedMembership[] = "a_b&{$dao->relationship_type_id}&{$dao->contact_id_a}";
+    }
+
+    $sql = "SELECT r.contact_id_b AS contact_id_b, r.relationship_type_id AS relationship_type_id FROM civicrm_relationship r 
+      INNER JOIN civicrm_membership_type mt ON r.relationship_type_id = mt.relationship_type_id 
+      INNER JOIN civicrm_membership m ON m.membership_type_id = mt.id
+      WHERE contact_id_a = %1 AND m.contact_id = %2 AND mt.relationship_direction = 'a_b';";
+    $dao = CRM_Core_DAO::executeQuery($sql, $params);
+    while($dao->fetch()) {
+      $relatedMembership[] = "b_a&{$dao->relationship_type_id}&{$dao->contact_id_b}";
+    }
+
+    // check relatedMembership on otherId but mainId doesn't be owner_membership_id;
+    $sql = "SELECT r.contact_id_a AS contact_id_a, r.relationship_type_id AS relationship_type_id FROM civicrm_relationship r 
+      INNER JOIN civicrm_membership_type mt ON r.relationship_type_id = mt.relationship_type_id 
+      INNER JOIN civicrm_membership m ON m.membership_type_id = mt.id
+      WHERE contact_id_b = %2 AND m.contact_id = %1 AND mt.relationship_direction = 'b_a';";
+    $dao = CRM_Core_DAO::executeQuery($sql, $params);
+    while($dao->fetch()) {
+      $relatedMembership[] ="a_b&{$dao->relationship_type_id}&{$dao->contact_id_a}";
+    }
+
+    $sql = "SELECT r.contact_id_b AS contact_id_b, r.relationship_type_id AS relationship_type_id FROM civicrm_relationship r 
+      INNER JOIN civicrm_membership_type mt ON r.relationship_type_id = mt.relationship_type_id 
+      INNER JOIN civicrm_membership m ON m.membership_type_id = mt.id
+      WHERE contact_id_a = %2 AND m.contact_id = %1 AND mt.relationship_direction = 'a_b';";
+    $dao = CRM_Core_DAO::executeQuery($sql, $params);
+    while($dao->fetch()) {
+      $relatedMembership[] = "b_a&{$dao->relationship_type_id}&{$dao->contact_id_b}";
+    }
+
     // Delete circular relationships
     $sqls[] = "DELETE FROM civicrm_relationship
       WHERE (contact_id_a = $mainId AND contact_id_b = $otherId)
@@ -1316,7 +1358,28 @@ cc.sort_name LIKE '%$name%'";
 
     // Move current employer id (name will get updated later)
     $sqls[] = "UPDATE civicrm_contact SET employer_id = $mainId WHERE employer_id = $otherId";
+    $sqls[] = "UPDATE civicrm_contact SET organization_name = ( SELECT display_name FROM civicrm_contact WHERE id = $mainId) WHERE employer_id = $mainId";
+
+    if ($relatedMembership) {
+      return $relatedMembership;
+    }
   }
 
+  /**
+   * Create related memberships which has owner_membership_id.
+   * @param int $mainId contact id of main contact record. The ID of reserved contact.
+   * @param array $data: array[] = "{b_a|a_b}&{relationship_type_id}&{contact_a_id|contact_b_id}".
+   */
+  static function syncRelatedMemberships($mainId, $data) {
+    foreach ($data as $relationshipDescription) {
+      list($direction, $relationship_type_id, $relationship_contact_id) = explode('&', $relationshipDescription);
+      $params = array(
+        'relationship_type_id' => "{$relationship_type_id}_{$direction}",
+        'contact_check' => array($mainId => 1),
+      );
+      $ids['contact'] = $relationship_contact_id;
+      CRM_Contact_BAO_Relationship::relatedMemberships($relationship_contact_id, $params, $ids, CRM_Core_Action::ADD);
+    }
+  }
 }
 
