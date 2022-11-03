@@ -10,7 +10,7 @@
     var el = document.createElement('input'),
         name = 'onpaste';
     el.setAttribute(name, '');
-    return (typeof el[name] === 'function')?'paste':'input';             
+    return (typeof el[name] === 'function')?'paste':'input';
 }
 
 var pasteEventName = getPasteEvent() + ".amask",
@@ -315,7 +315,7 @@ $.fn.extend({
           p,
           c,
           next;
-        
+
         pos = input.caret();
         pos.end--;
         pos.begin--;
@@ -473,7 +473,7 @@ $.fn.extend({
 
           focusText = input.val();
           pos = checkVal();
-          
+
           caretTimeoutId = setTimeout(function(){
             writeBuffer();
             if (pos == amask.length) {
@@ -492,14 +492,14 @@ $.fn.extend({
           removeImeNotify(inputWrapper);
         })
         .bind("keydown.amask", keydownEvent)
-        .bind("keypress.amask", keypressEvent)
+        .bind("keydown.amask", keypressEvent) // 'keypress' event is deprecated, so bind to 'keydown' event
         .bind("input", keyInput)
         .bind(pasteEventName, function() {
           isPasteEvent = true;
 
-          setTimeout(function() { 
+          setTimeout(function() {
             var pos=checkVal(true);
-            input.caret(pos); 
+            input.caret(pos);
             if (settings.completed && pos == input.val().length)
               settings.completed.call(input);
           }, 0);
