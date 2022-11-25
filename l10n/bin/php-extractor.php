@@ -458,9 +458,9 @@ foreach (array_slice($argv, 1) as $file) {
             $tokens[] = $tok;
         }
         if (is_array($tok)) {
-            $lineno += count(split("\n", $tok[1])) - 1;
+            $lineno += count(explode("\n", $tok[1])) - 1;
         } else {
-            $lineno += count(split("\n", $tok)) - 1;
+            $lineno += count(explode("\n", $tok)) - 1;
         }
     }
 
