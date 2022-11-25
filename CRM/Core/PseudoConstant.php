@@ -1509,6 +1509,7 @@ WHERE  id = %1";
     if (!self::$wysiwygEditor) {
       require_once 'CRM/Core/OptionGroup.php';
       self::$wysiwygEditor = CRM_Core_OptionGroup::values('wysiwyg_editor');
+      unset(self::$wysiwygEditor[1]);
     }
     return self::$wysiwygEditor;
   }

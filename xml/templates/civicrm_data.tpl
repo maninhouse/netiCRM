@@ -598,10 +598,7 @@ VALUES
   (@option_group_id_sfe, 'rar'      , 19, NULL   ,  NULL, 0, 0, 19, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_sfe, '7z'       , 20, NULL   ,  NULL, 0, 0, 20, NULL, 0, 0, 1, NULL, NULL),
 
- 
-  (@option_group_id_we, 'TinyMCE'    , 1, NULL, NULL, 0, NULL, 1, NULL, 0, 1, 1, NULL, NULL),
   (@option_group_id_we, 'CKEditor'  , 2, NULL, NULL, 0, NULL, 2, NULL, 0, 1, 1, NULL, NULL),
-  (@option_group_id_we, 'Joomla Default Editor'  , 3, NULL, NULL, 0, NULL, 3, NULL, 0, 1, 1, NULL, NULL), 
 
   (@option_group_id_mt, '{ts escape="sql"}Search Builder{/ts}',      1, 'Search Builder',      NULL, 0, 0,    1, NULL, 0, 1, 1, NULL, NULL),
   (@option_group_id_mt, '{ts escape="sql"}Import Contact{/ts}',      2, 'Import Contact',      NULL, 0, 0,    2, NULL, 0, 1, 1, NULL, NULL),
