@@ -190,8 +190,8 @@ class CRM_Grant_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
    * @access public
    *
    */
-  static function &links($key = NULL) {
-    $cid = CRM_Utils_Request::retrieve('cid', 'Integer', $this);
+  static function &links($key = NULL, $self = NULL) {
+    $cid = CRM_Utils_Request::retrieve('cid', 'Integer', $self);
     $extraParams = ($key) ? "&key={$key}" : NULL;
 
     if (!(self::$_links)) {
@@ -311,7 +311,7 @@ class CRM_Grant_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
         $row['checkbox'] = CRM_Core_Form::CB_PREFIX . $result->grant_id;
       }
 
-      $row['action'] = CRM_Core_Action::formLink(self::links($this->_key),
+      $row['action'] = CRM_Core_Action::formLink(self::links($this->_key, $this),
         $mask,
         array('id' => $result->grant_id,
           'cid' => $result->contact_id,
